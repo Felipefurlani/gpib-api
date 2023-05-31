@@ -3,6 +3,8 @@ import cors from "cors";
 import frutas from "./routes/frutas";
 import user from "./routes/user";
 import index from "./routes/index";
+import cardapio from "./routes/cardapio";
+import saldo from "./routes/saldo"
 
 class App {
   public app: Application;
@@ -11,7 +13,6 @@ class App {
     this.app = express();
     this.config();
     this.routes();
-    this.errorHandler();
   }
 
   private config(): void {
@@ -27,13 +28,8 @@ class App {
     this.app.use("/", index);
     this.app.use("/user", user);
     this.app.use("/frutas", frutas);
-  }
-
-  private errorHandler(): void {
-    this.app.use((error: Error, _: Request, res: Response) => {
-      console.error(error.stack);
-      res.status(500).json({ message: "Internal Server Error" });
-    });
+    this.app.use("/cardapio", cardapio)
+    this.app.use("/saldo", saldo)
   }
 }
 
