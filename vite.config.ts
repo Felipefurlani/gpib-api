@@ -14,6 +14,9 @@ export default defineConfig({
       appPath: "./src/index.ts"
     })
   ],
+  build: {
+    target: "esnext"
+  },
   optimizeDeps: {
     include: ["express"]
   }
