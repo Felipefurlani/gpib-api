@@ -4,15 +4,14 @@ import { APIError } from "../models/api_error";
 type Auth = {
   ra: number;
   senha: string;
-}
+};
 
 export async function getSaldo({ ra, senha }: Auth) {
   const [saldo] = await sql<{ saldo: number }>`
     SELECT saldo FROM Aluno WHERE ra = ${ra} AND senha = ${senha}
   `;
 
-  if (!saldo)
-    throw new APIError("Aluno não encontrado", { status: 404 });
+  if (!saldo) throw new APIError("Aluno não encontrado", { status: 404 });
 
   return saldo;
 }

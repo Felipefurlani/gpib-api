@@ -1,5 +1,5 @@
 import { Router } from "express";
-import database from '../database'
+import database from "../database";
 
 const router = Router();
 
@@ -21,7 +21,7 @@ router.get("/brew_coffee", (_, res) => {
 
 router.get("/teste_db", async (_, res) => {
   const teste = await database.execute("SELECT * FROM Cardapio");
-  res.send(teste)
-})
+  res.send(teste);
+});
 
 export default router;

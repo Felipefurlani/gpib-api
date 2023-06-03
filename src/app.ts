@@ -4,7 +4,7 @@ import frutas from "./routes/frutas";
 import user from "./routes/user";
 import index from "./routes/index";
 import cardapio from "./routes/cardapio";
-import saldo from "./routes/saldo"
+import saldo from "./routes/saldo";
 import { APIError } from "./models/api_error";
 
 class App {
@@ -30,19 +30,17 @@ class App {
     this.app.use("/", index);
     this.app.use("/user", user);
     this.app.use("/frutas", frutas);
-    this.app.use("/cardapio", cardapio)
-    this.app.use("/saldo", saldo)
+    this.app.use("/cardapio", cardapio);
+    this.app.use("/saldo", saldo);
   }
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   static errorHandler: express.ErrorRequestHandler = (err, _, res, _next) => {
     console.error("hi!", err.message);
 
-    if (err instanceof APIError)
-      return err.writeResponse(res);
-    else
-      return res.status(500).send("Internal Server Error");
-  }
+    if (err instanceof APIError) return err.writeResponse(res);
+    else return res.status(500).send("Internal Server Error");
+  };
 }
 
 export default new App().app;

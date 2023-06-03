@@ -58,12 +58,10 @@ export async function create(cardapio: Cardapio) {
       ${cardapio.date}
     )`;
   } catch (error) {
-    if (!(error && typeof error === "object" && "code" in error))
-      throw error;
+    if (!(error && typeof error === "object" && "code" in error)) throw error;
 
     if (error.code === "ER_DUP_ENTRY")
       throw new APIError("Cardápio já cadastrado", { status: 409 });
-    else
-      throw error;
+    else throw error;
   }
 }
