@@ -2,6 +2,106 @@ import { sql } from "../database";
 import { APIError } from "../models/api_error";
 import { Cardapio } from "../models/cardapio";
 
+export async function cardapioHoje() {
+  const [cardapio] = await sql<Cardapio>`
+    SELECT principal,guarnicao,salada,sobremesa,suco,periodo,vegetariano
+    FROM Cardapio
+    WHERE data = CURDATE()
+  `;
+
+  if (!cardapio) {
+    throw new APIError("Não há cardápios para hoje", {
+      status: 404
+    });
+  }
+
+  return cardapio;
+}
+
+export async function cardapiosSemana() {
+  const cardapios = await sql<Cardapio>`
+    SELECT principal,guarnicao,salada,sobremesa,suco,periodo,vegetariano
+    FROM Cardapio
+    WHERE WEEK(data) = WEEK(CURDATE())
+    AND YEAR(data) = YEAR(CURDATE())
+    ORDER BY data ASC
+  `;
+
+  if (!cardapios?.length)
+    throw new APIError("Não há cardápios nessa semana", { status: 404 });
+
+  return cardapios;
+}
+
+export async function cardapiosMes() {
+  const cardapios = await sql<Cardapio>`
+    SELECT principal,guarnicao,salada,sobremesa,suco,periodo,vegetariano
+    FROM Cardapio
+    WHERE MONTH(data) = MONTH(CURDATE())
+    AND YEAR(data) = YEAR(CURDATE())
+    ORDER BY data ASC
+  `;
+
+  if (!cardapios?.length) {
+    throw new APIError("Não há cardápios nesse mês", {
+      status: 404
+    });
+  }
+
+  return cardapios;
+}
+
+export async function cardapiosAno() {
+  const cardapios = await sql<Cardapio>`
+    SELECT principal,guarnicao,salada,sobremesa,suco,periodo,vegetariano
+    FROM Cardapio
+    WHERE YEAR(data) = YEAR(CURDATE())
+    ORDER BY data ASC
+  `;
+
+  if (!cardapios?.length) {
+    throw new APIError("Não há cardápios nesse ano", {
+      status: 404
+    });
+  }
+
+  return cardapios;
+}
+
+export async function bySemana(date: Date) {
+  const [dateStr] = date.toISOString().split("T");
+
+  const cardapios = await sql<Cardapio>`
+    SELECT principal,guarnicao,salada,sobremesa,suco,periodo,vegetariano
+    FROM Cardapio
+    WHERE WEEK(data) = WEEK(${dateStr})
+    AND YEAR(data) = YEAR(${dateStr})
+    ORDER BY data ASC
+  `;
+
+  if (!cardapios?.length) {
+    throw new APIError("Cardápios não encontrados", {
+      status: 404
+    });
+  }
+
+  return cardapios;
+}
+
+export async function findByWeek(week: number) {
+  const cardapios = await sql<Cardapio>`
+    SELECT * FROM Cardapio
+    WHERE WEEK(data) = ${week}
+    AND YEAR(data) = YEAR(CURDATE())
+    ORDER BY data ASC
+  `;
+
+  if (!cardapios?.length)
+    throw new APIError("Cardápios não encontrados", { status: 404 });
+
+  return cardapios;
+}
+
 export async function findByDate(date: Date) {
   const [dateStr] = date.toISOString().split("T");
 
@@ -16,13 +116,25 @@ export async function findByDate(date: Date) {
   return cardapio;
 }
 
-export async function findByMonth(month: number, year?: number) {
-  const yearVal = year ?? new Date().getFullYear();
-
+export async function findByMonth(month: number) {
   const cardapios = await sql<Cardapio>`
     SELECT * FROM Cardapio
-    WHERE MONTH(data) = ${month} AND YEAR(data) = ${yearVal}
-    ORDER BY data DESC
+    WHERE MONTH(data) = ${month}
+    AND YEAR(data) = YEAR(CURDATE())
+    ORDER BY data ASC
+  `;
+
+  if (!cardapios?.length)
+    throw new APIError("Cardápios não encontrados", { status: 404 });
+
+  return cardapios;
+}
+
+export async function findByYear(year: number) {
+  const cardapios = await sql<Cardapio>`
+    SELECT * FROM Cardapio
+    WHERE YEAR(data) = ${year}
+    ORDER BY data ASC
   `;
 
   if (!cardapios?.length)

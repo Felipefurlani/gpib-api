@@ -4,14 +4,14 @@ import { APIError } from "../models/api_error";
 
 const router = Router();
 
-router.get("/:data", async (req, res, next) => {
-  const date = new Date(req.params.data);
+router.get("/", async (_, res, next) => {
+  const cardapios = await Cardapio.cardapioHoje().catch(next);
+  res.send(cardapios);
+});
 
-  if (isNaN(date.getTime()))
-    next(new APIError("Data inválida", { status: 400 }));
-
-  const cardapio = await Cardapio.findByDate(date).catch(next);
-  res.send(cardapio);
+router.get("/mes", async (_, res, next) => {
+  const cardapios = await Cardapio.cardapiosMes().catch(next);
+  res.send(cardapios);
 });
 
 router.get("/mes/:mes", async (req, res, next) => {
@@ -24,7 +24,42 @@ router.get("/mes/:mes", async (req, res, next) => {
   res.send(cardapios);
 });
 
-router.get("/", async (_, res, next) => {
+router.get("/semana", async (_, res, next) => {
+  const cardapios = await Cardapio.cardapiosSemana().catch(next);
+  res.send(cardapios);
+});
+
+router.get("/semana/:semana", async (req, res, next) => {
+  const week = Number(req.params.semana);
+
+  if (isNaN(week) || week < 1 || week > 53)
+    next(new APIError("Semana inválida", { status: 400 }));
+
+  const cardapios = await Cardapio.findByWeek(week).catch(next);
+  res.send(cardapios);
+});
+
+router.get("/ano", async (_, res, next) => {
+  const cardapios = await Cardapio.cardapiosAno().catch(next);
+  res.send(cardapios);
+});
+
+router.get("/ano/:ano", async (req, res, next) => {
+  const year = Number(req.params.ano);
+
+  if (isNaN(year)) {
+    next(
+      new APIError("Ano inválido", {
+        status: 400
+      })
+    );
+  }
+
+  const cardapios = await Cardapio.findByYear(year).catch(next);
+  res.send(cardapios);
+});
+
+router.get("/todos", async (_, res, next) => {
   const cardapios = await Cardapio.findAll().catch(next);
   res.send(cardapios);
 });
@@ -32,10 +67,33 @@ router.get("/", async (_, res, next) => {
 router.post("/", async (req, res, next) => {
   const cardapio = req.body;
 
-  if (!cardapio) next(new APIError("Cardápio inválido", { status: 400 }));
+  // Aqui deveria ter uma validação
+  // Recomendo usar zod
+  if (!cardapio) {
+    next(
+      new APIError("Cardápio inválido", {
+        status: 400
+      })
+    );
+  }
 
   await Cardapio.create(cardapio).catch(next);
   res.send("Cardápio adicionado com sucesso!");
+});
+
+router.get("/:data", async (req, res, next) => {
+  const date = new Date(req.params.data);
+
+  if (isNaN(date.getTime())) {
+    next(
+      new APIError("Data inválida", {
+        status: 400
+      })
+    );
+  }
+
+  const cardapio = await Cardapio.findByDate(date).catch(next);
+  res.send(cardapio);
 });
 
 export default router;
