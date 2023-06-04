@@ -116,6 +116,23 @@ export async function findByDate(date: Date) {
   return cardapio;
 }
 
+export async function findByDay(day: number) {
+  const [cardapio] = await sql<Cardapio>`
+    SELECT * FROM Cardapio
+    WHERE DAY(data) = ${day}
+    AND MONTH(data) = MONTH(CURDATE())
+    AND YEAR(data) = YEAR(CURDATE())
+  `;
+
+  if (!cardapio) {
+    throw new APIError("Cardápio não encontrado", {
+      status: 404
+    });
+  }
+
+  return cardapio;
+}
+
 export async function findByMonth(month: number) {
   const cardapios = await sql<Cardapio>`
     SELECT * FROM Cardapio

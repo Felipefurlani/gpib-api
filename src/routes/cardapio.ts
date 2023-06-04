@@ -9,6 +9,41 @@ router.get("/", async (_, res, next) => {
   res.send(cardapios);
 });
 
+router.get("/data/:data", async (req, res, next) => {
+  const date = new Date(req.params.data);
+
+  if (isNaN(date.getTime())) {
+    next(
+      new APIError("Data inválida", {
+        status: 400
+      })
+    );
+  }
+
+  const cardapio = await Cardapio.findByDate(date).catch(next);
+  res.send(cardapio);
+});
+
+router.get("/hoje", async (_, res, next) => {
+  const cardapios = await Cardapio.cardapioHoje().catch(next);
+  res.send(cardapios);
+});
+
+router.get("/dia", async (_, res, next) => {
+  const cardapios = await Cardapio.cardapioHoje().catch(next);
+  res.send(cardapios);
+});
+
+router.get("/dia/:dia", async (req, res, next) => {
+  const day = Number(req.params.dia);
+
+  if (isNaN(day) || day < 1 || day > 31)
+    next(new APIError("Dia inválido", { status: 400 }));
+
+  const cardapios = await Cardapio.findByDay(day).catch(next);
+  res.send(cardapios);
+});
+
 router.get("/mes", async (_, res, next) => {
   const cardapios = await Cardapio.cardapiosMes().catch(next);
   res.send(cardapios);
