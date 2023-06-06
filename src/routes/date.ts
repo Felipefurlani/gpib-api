@@ -11,7 +11,7 @@ router.get('/feriado/:data', async (req, res, next) => {
         res.status(400).send("Formato de data inválido.");
     }
 
-    if (data.getFullYear() <= 1900 && data.getFullYear() >= 2100) {
+    if (data.getFullYear() <= 1900 || data.getFullYear() >= 2100) {
         res.status(400).send("Ano inválido.");
     }
     
