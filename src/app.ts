@@ -5,6 +5,7 @@ import user from "./routes/user";
 import index from "./routes/index";
 import cardapio from "./routes/cardapio";
 import saldo from "./routes/saldo"
+import date from "./routes/date";
 
 class App {
   public app: Application;
@@ -30,6 +31,7 @@ class App {
     this.app.use("/frutas", frutas);
     this.app.use("/cardapio", cardapio)
     this.app.use("/saldo", saldo)
+    this.app.use("/date", date);
   }
 }
 
