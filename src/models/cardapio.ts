@@ -6,5 +6,5 @@ export type Cardapio = {
   suco: string;
   periodo: string;
   vegetariano: string;
-  date?: Date;
+  data: Date;
 };
