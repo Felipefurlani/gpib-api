@@ -37,7 +37,8 @@ export async function insert(table: string, data: Record<string, unknown>) {
 
   const interrogations = Array(values.length).fill("?");
 
-  const query = `INSERT INTO ${table} (${columns.join(", ")}) VALUES (${interrogations.join(", ")})`;
+  const query = `INSERT INTO ${table}
+    (${columns.join(", ")}) VALUES (${interrogations.join(", ")})`;
   await pool.execute(query, [values]);
 }
 

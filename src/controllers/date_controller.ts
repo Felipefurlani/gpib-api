@@ -5,14 +5,6 @@ import { APIError } from "../models/api_error";
 
 const map = new Map<number, string[]>();
 
-export async function isHoliday(date: Date) {
-  const year = date.getFullYear();
-  const [dateStr] = date.toISOString().split("T");
-
-  let holidays = await getHolidays(year);
-  return holidays.includes(dateStr);
-}
-
 export async function getHolidays(year: number) {
   let holidays = map.get(year);
 
@@ -31,6 +23,14 @@ export async function getHolidays(year: number) {
   }
 
   return holidays;
+}
+
+export async function isHoliday(date: Date) {
+  const year = date.getFullYear();
+  const [dateStr] = date.toISOString().split("T");
+
+  const holidays = await getHolidays(year);
+  return holidays.includes(dateStr);
 }
 
 /**
