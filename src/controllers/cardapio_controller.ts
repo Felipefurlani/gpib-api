@@ -1,6 +1,7 @@
 import { sql } from "../database";
 import { APIError } from "../models/api_error";
 import { Cardapio } from "../models/cardapio";
+import { addToMonth, addToWeek, addToYear } from "./date_controller";
 
 export async function cardapioHoje() {
   const [cardapio] = await sql<Cardapio>`
@@ -20,7 +21,7 @@ export async function cardapioHoje() {
 
 export async function cardapiosSemana() {
   const cardapios = await sql<Cardapio>`
-    SELECT principal,guarnicao,salada,sobremesa,suco,periodo,vegetariano
+    SELECT data,principal,guarnicao,salada,sobremesa,suco,periodo,vegetariano
     FROM Cardapio
     WHERE WEEK(data) = WEEK(CURDATE())
     AND YEAR(data) = YEAR(CURDATE())
@@ -30,13 +31,12 @@ export async function cardapiosSemana() {
   if (!cardapios?.length)
     throw new APIError("Não há cardápios nessa semana", { status: 404 });
 
-  return cardapios;
+  return addToWeek(cardapios);
 }
 
 export async function cardapiosMes() {
   const cardapios = await sql<Cardapio>`
-    SELECT principal,guarnicao,salada,sobremesa,suco,periodo,vegetariano
-    FROM Cardapio
+    SELECT * FROM Cardapio
     WHERE MONTH(data) = MONTH(CURDATE())
     AND YEAR(data) = YEAR(CURDATE())
     ORDER BY data ASC
@@ -48,13 +48,12 @@ export async function cardapiosMes() {
     });
   }
 
-  return cardapios;
+  return addToMonth(cardapios);
 }
 
 export async function cardapiosAno() {
   const cardapios = await sql<Cardapio>`
-    SELECT principal,guarnicao,salada,sobremesa,suco,periodo,vegetariano
-    FROM Cardapio
+    SELECT * FROM Cardapio
     WHERE YEAR(data) = YEAR(CURDATE())
     ORDER BY data ASC
   `;
@@ -65,15 +64,14 @@ export async function cardapiosAno() {
     });
   }
 
-  return cardapios;
+  return addToYear(cardapios);
 }
 
 export async function bySemana(date: Date) {
   const [dateStr] = date.toISOString().split("T");
 
   const cardapios = await sql<Cardapio>`
-    SELECT principal,guarnicao,salada,sobremesa,suco,periodo,vegetariano
-    FROM Cardapio
+    SELECT * FROM Cardapio
     WHERE WEEK(data) = WEEK(${dateStr})
     AND YEAR(data) = YEAR(${dateStr})
     ORDER BY data ASC
@@ -85,7 +83,7 @@ export async function bySemana(date: Date) {
     });
   }
 
-  return cardapios;
+  return addToWeek(cardapios);
 }
 
 export async function findByWeek(week: number) {
@@ -99,15 +97,14 @@ export async function findByWeek(week: number) {
   if (!cardapios?.length)
     throw new APIError("Cardápios não encontrados", { status: 404 });
 
-  return cardapios;
+  return addToWeek(cardapios);
 }
 
 export async function findByDate(date: Date) {
   const [dateStr] = date.toISOString().split("T");
 
   const [cardapio] = await sql<Cardapio>`
-    SELECT principal,guarnicao,salada,sobremesa,suco,periodo,vegetariano
-    FROM Cardapio
+    SELECT * FROM Cardapio
     WHERE data = ${dateStr}
   `;
 
@@ -144,7 +141,7 @@ export async function findByMonth(month: number) {
   if (!cardapios?.length)
     throw new APIError("Cardápios não encontrados", { status: 404 });
 
-  return cardapios;
+  return addToMonth(cardapios);
 }
 
 export async function findByYear(year: number) {
@@ -157,7 +154,7 @@ export async function findByYear(year: number) {
   if (!cardapios?.length)
     throw new APIError("Cardápios não encontrados", { status: 404 });
 
-  return cardapios;
+  return addToYear(cardapios);
 }
 
 export async function findAll() {
@@ -184,7 +181,7 @@ export async function create(cardapio: Cardapio) {
       ${cardapio.suco},
       ${cardapio.periodo},
       ${cardapio.vegetariano},
-      ${cardapio.date}
+      ${cardapio.data}
     )`;
   } catch (error) {
     if (!(error && typeof error === "object" && "code" in error)) throw error;
