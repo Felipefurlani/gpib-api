@@ -38,7 +38,7 @@
     "prefer-arrow-callback": "warn",
     "prefer-template": "warn",
     "no-nested-ternary": "error",
-    "id-blacklist": ["error", "data", "e", "cb", "callback", "fon", "val"],
+    "id-blacklist": ["e", "cb", "callback", "fon", "val"],
     "no-implied-eval": "error",
     "no-const-assign": "error",
     "no-extra-boolean-cast": "warn",
