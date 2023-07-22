@@ -33,24 +33,10 @@ export async function isHoliday(date: Date) {
   return holidays.includes(dateStr);
 }
 
-/**
- * Returns the number of the day within the year
- * @example dayOfYear(new Date("2021-01-01")) // 1
- * @example dayOfYear(new Date("2021-12-31")) // 365
- * @param date
- */
-function dayOfYear(date: Date) {
-  const start = new Date(date.getFullYear(), 0, 0);
-  const diff = date.getTime() - start.getTime();
-
-  return Math.floor(diff / (1000 * 60 * 60 * 24));
-}
-
 async function getInterval(from: Date, to: Date) {
-  const interval = Math.ceil(
-    (to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24)
-  );
-  const dates: Array<undefined | "feriado"> = Array(interval + 1);
+  const interval =
+    Math.floor((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+  const dates: Array<undefined | "feriado"> = Array(interval);
 
   for (let year = from.getFullYear(); year <= to.getFullYear(); year++) {
     const holidays = await getHolidays(year);
@@ -59,7 +45,7 @@ async function getInterval(from: Date, to: Date) {
       const feriadoDate = new Date(feriado);
 
       if (feriadoDate >= from && feriadoDate <= to) {
-        const day = Math.ceil(
+        const day = Math.floor(
           (feriadoDate.getTime() - from.getTime()) / (1000 * 60 * 60 * 24)
         );
         dates[day] = "feriado";
@@ -70,20 +56,30 @@ async function getInterval(from: Date, to: Date) {
   return dates;
 }
 
+async function addToInterval(cardapios: Cardapio[], from: Date, to: Date) {
+  const dates: Array<Cardapio[] | "feriado" | undefined> = await getInterval(
+    from,
+    to
+  );
+
+  for (const cardapio of cardapios) {
+    const day = Math.floor(
+      (cardapio.data.getTime() - from.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    const date = (dates[day] ??= []);
+    if (date === "feriado") continue;
+    date.push(cardapio);
+  }
+
+  return dates;
+}
+
 export async function addToYear(cardapios: Cardapio[]) {
   const firstDay = new Date(cardapios[0].data.getFullYear(), 0, 1);
   const lastDay = new Date(firstDay.getFullYear() + 1, 0, 0);
 
-  const yearArr: Array<Cardapio | "feriado" | undefined> = await getInterval(
-    firstDay,
-    lastDay
-  );
-
-  for (const cardapio of cardapios) {
-    yearArr[dayOfYear(cardapio.data) - 1] ??= cardapio;
-  }
-
-  return yearArr;
+  return addToInterval(cardapios, firstDay, lastDay);
 }
 
 export async function addToMonth(cardapios: Cardapio[]) {
@@ -98,16 +94,7 @@ export async function addToMonth(cardapios: Cardapio[]) {
     0
   );
 
-  const monthArr: Array<Cardapio | "feriado" | undefined> = await getInterval(
-    firstDay,
-    lastDay
-  );
-
-  for (const cardapio of cardapios) {
-    monthArr[cardapio.data.getDate() - 1] ??= cardapio;
-  }
-
-  return monthArr;
+  return addToInterval(cardapios, firstDay, lastDay);
 }
 
 export async function addToWeek(cardapios: Cardapio[]) {
@@ -122,14 +109,5 @@ export async function addToWeek(cardapios: Cardapio[]) {
     monday.getDate() + 4
   );
 
-  const weekArr: Array<Cardapio | "feriado" | undefined> = await getInterval(
-    monday,
-    friday
-  );
-
-  for (const cardapio of cardapios) {
-    weekArr[cardapio.data.getDay() - 1] ??= cardapio;
-  }
-
-  return weekArr;
+  return addToInterval(cardapios, monday, friday);
 }
