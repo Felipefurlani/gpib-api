@@ -1,10 +1,12 @@
 import express, { Application } from "express";
 import cors from "cors";
+import "express-async-errors";
 import frutas from "./routes/frutas";
 import user from "./routes/user";
 import index from "./routes/index";
 import cardapio from "./routes/cardapio";
 import saldo from "./routes/saldo";
+import date from "./routes/date";
 import { APIError } from "./models/api_error";
 
 class App {
@@ -12,14 +14,14 @@ class App {
 
   constructor() {
     this.app = express();
-    this.routes();
     this.config();
+    this.routes();
+    this.app.use(App.errorHandler);
   }
 
   private config(): void {
     this.app.use(express.json());
     this.app.use(cors());
-    this.app.use(App.errorHandler);
   }
 
   private routes(): void {
@@ -32,14 +34,20 @@ class App {
     this.app.use("/frutas", frutas);
     this.app.use("/cardapio", cardapio);
     this.app.use("/saldo", saldo);
+    this.app.use("/date", date);
   }
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   static errorHandler: express.ErrorRequestHandler = (err, _, res, _next) => {
-    console.error(err);
+    console.error("ErrorHandler", err);
 
-    if (err instanceof APIError) return err.writeResponse(res);
-    else return res.status(500).send("Internal Server Error");
+    if (err instanceof APIError) {
+      console.log("instanceof APIError");
+      err.writeResponse(res);
+    } else {
+      console.log("not instanceof APIError");
+      res.status(500).send("Internal Server Error");
+    }
   };
 }
 
