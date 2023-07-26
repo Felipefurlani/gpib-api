@@ -7,36 +7,37 @@ type Auth = {
 };
 
 export async function getSaldo({ ra, senha }: Auth) {
-  const [saldo] = await sql<{ saldo: number }>`
-    SELECT saldo FROM Aluno WHERE ra = ${ra} AND senha = ${senha}
+  const [aluno] = await sql<{ saldo: number, senha: string }>`
+    SELECT senha, saldo FROM Saldo_RU WHERE ra = ${ra}
   `;
 
-  if (!saldo) throw new APIError("Aluno não encontrado", { status: 404 });
+  if (!aluno) throw new APIError("Aluno não encontrado", { status: 404 });
+  if (aluno.senha !== senha) throw new APIError("Senha incorreta", { status: 401 });
 
-  return saldo;
+  return { saldo: aluno.saldo };
 }
 
 export async function setSaldo({ ra, senha }: Auth, saldo: number) {
   await sql`
-    UPDATE Aluno SET saldo = ${saldo} WHERE ra = ${ra} AND senha = ${senha}
+    UPDATE Saldo_RU SET saldo = ${saldo} WHERE ra = ${ra} AND senha = ${senha}
   `;
 }
 
 export async function addSaldo({ ra, senha }: Auth, saldo: number) {
   await sql`
-    UPDATE Aluno SET saldo = saldo + ${saldo} WHERE ra = ${ra} AND senha = ${senha}
+    UPDATE Saldo_RU SET saldo = saldo + ${saldo} WHERE ra = ${ra} AND senha = ${senha}
   `;
 }
 
 export async function addAluno({ ra, senha }: Auth) {
   await sql`
-    INSERT INTO Aluno (ra, senha, saldo) VALUES (${ra}, ${senha}, 0)
+    INSERT INTO Saldo_RU (ra, senha, saldo) VALUES (${ra}, ${senha}, 0)
   `;
 }
 
 export async function checkRA(ra: string) {
   const [aluno] = await sql<Auth>`
-    SELECT ra FROM Aluno WHERE ra = ${ra}
+    SELECT ra FROM Saldo_RU WHERE ra = ${ra}
   `;
 
   return !!aluno;
