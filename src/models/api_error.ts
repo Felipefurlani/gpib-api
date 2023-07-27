@@ -16,9 +16,6 @@ export class APIError extends Error {
     res.statusCode = this.status;
     res.statusMessage = STATUS_CODES[this.status] || "Unknown Error";
 
-    console.count("APIError");
-    console.log(res.statusCode, this.message)
-
     return res.send(this.message);
   }
 }

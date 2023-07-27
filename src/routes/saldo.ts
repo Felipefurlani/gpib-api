@@ -6,8 +6,6 @@ const router = Router();
 router.post("/", async (req, res) => {
   const body = req.body;
 
-  console.log("Saldo", req.body);
-
   const saldo = await getSaldo({ ra: body.ra, senha: body.senha });
   res.send(saldo);
 });

@@ -39,13 +39,11 @@ class App {
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   static errorHandler: express.ErrorRequestHandler = (err, _, res, _next) => {
-    console.error("ErrorHandler", err);
-
     if (err instanceof APIError) {
       console.log("instanceof APIError");
       err.writeResponse(res);
     } else {
-      console.log("not instanceof APIError");
+      console.error(err)
       res.status(500).send("Internal Server Error");
     }
   };
