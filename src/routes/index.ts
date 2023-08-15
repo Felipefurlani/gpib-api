@@ -4,7 +4,7 @@ import database from "../database";
 const router = Router();
 
 router.get("/", (_, res) => {
-  res.send("Hello World!!");
+  res.send("🔥");
 });
 
 router.get("/status", (_, res) => {
@@ -20,6 +20,12 @@ router.get("/brew_coffee", (_, res) => {
 });
 
 router.get("/teste_db", async (_, res) => {
+  const teste = await database.execute("SELECT * FROM Cardapio");
+  res.send(teste);
+});
+
+
+router.get("/peri_users", async (_, res) => {
   const teste = await database.execute("SELECT * FROM Cardapio");
   res.send(teste);
 });

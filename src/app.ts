@@ -28,13 +28,16 @@ class App {
     this.app.get("/", (_, res) => {
       res.send("Hello World!");
     });
-
+/*
     this.app.use("/", index);
     this.app.use("/user", user);
     this.app.use("/frutas", frutas);
     this.app.use("/cardapio", cardapio);
     this.app.use("/saldo", saldo);
     this.app.use("/date", date);
+*/
+
+    this.app.use("/", index);
   }
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
