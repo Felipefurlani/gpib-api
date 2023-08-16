@@ -1,13 +1,9 @@
 import express, { Application } from "express";
 import cors from "cors";
 import "express-async-errors";
-import frutas from "./routes/frutas";
-import user from "./routes/user";
 import index from "./routes/index";
-import cardapio from "./routes/cardapio";
-import saldo from "./routes/saldo";
-import date from "./routes/date";
 import { APIError } from "./models/api_error";
+import user_router from "./routes/user_peri_route";
 
 class App {
   public app: Application;
@@ -28,16 +24,9 @@ class App {
     this.app.get("/", (_, res) => {
       res.send("Hello World!");
     });
-/*
-    this.app.use("/", index);
-    this.app.use("/user", user);
-    this.app.use("/frutas", frutas);
-    this.app.use("/cardapio", cardapio);
-    this.app.use("/saldo", saldo);
-    this.app.use("/date", date);
-*/
 
     this.app.use("/", index);
+    this.app.use("/user", user_router);
   }
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars

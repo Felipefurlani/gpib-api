@@ -20,13 +20,13 @@ router.get("/brew_coffee", (_, res) => {
 });
 
 router.get("/teste_db", async (_, res) => {
-  const teste = await database.execute("SELECT * FROM Cardapio");
+  const teste = await database.execute("SELECT * FROM peri_user");
   res.send(teste);
 });
 
 
 router.get("/peri_users", async (_, res) => {
-  const teste = await database.execute("SELECT * FROM Cardapio");
+  const teste = await database.execute("SELECT * FROM peri_user");
   res.send(teste);
 });
 
