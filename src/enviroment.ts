@@ -13,3 +13,5 @@ export const DB: PoolOptions = {
   port: parseInt(process.env.DB_PORT || "3306"),
   charset: "utf8mb4"
 };
+
+console.log(DB);
