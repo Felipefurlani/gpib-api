@@ -1,5 +1,5 @@
 import { Router } from "express";
-import database from "../database";
+import {db} from "../database";
 
 const router = Router();
 
@@ -17,17 +17,6 @@ router.get("/ping", (_, res) => {
 
 router.get("/brew_coffee", (_, res) => {
   res.status(418).send("I'm a teapot");
-});
-
-router.get("/teste_db", async (_, res) => {
-  const teste = await database.execute("SELECT * FROM peri_user");
-  res.send(teste);
-});
-
-
-router.get("/peri_users", async (_, res) => {
-  const teste = await database.execute("SELECT * FROM peri_user");
-  res.send(teste);
 });
 
 export default router;
