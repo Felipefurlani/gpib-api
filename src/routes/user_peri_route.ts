@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
 
 router.post("/login", async (req, res) => {
     const credentials = req.body;
-    
+
     if (!credentials.email || !credentials.password) {
         res.status(400).send("email and password are required");
         return;
@@ -46,6 +46,10 @@ router.get("/whoami", async (req, res) => {
         return;
     }
     res.send("logged with email: " + email);
+});
+
+router.get("/howmany", async (req, res) => {
+    res.send(await user_peri_controller.count());
 });
 
 export default router;
