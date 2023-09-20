@@ -1,8 +1,9 @@
 import { db } from "../database";
 import { newPeriUser, updatePeriUser, periUser } from "../models/user_peri";
-import Database from "../models/types";
+//import Database from "../models/types";
 import { APIError } from "../models/api_error";
 import { sql } from "kysely";
+//import { userInfo } from "os";
 
 export async function getById(id: number) {
   return await db.selectFrom('peri_user')
@@ -52,8 +53,5 @@ export async function deleteById(id: number) {
 }
 
 export async function count() {
-  // get all ocurrencies of function getall
-  const users = await getAll();
-  // return the length of the array
-  return users.length.toString();
+  return await sql`SELECT COUNT(*) FROM peri_user`;
 }

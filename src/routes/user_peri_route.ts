@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as user_peri_controller from "../controllers/user_peri_controller";
+import { db } from "../database";
 
 const router = Router();
 
