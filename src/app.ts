@@ -4,6 +4,7 @@ import "express-async-errors";
 import index from "./routes/index";
 import { APIError } from "./models/api_error";
 import user_router from "./routes/user_peri_route";
+import post_router from "./routes/post_peri_route";
 
 class App {
   public app: Application;
@@ -27,6 +28,7 @@ class App {
 
     this.app.use("/", index);
     this.app.use("/user", user_router);
+    this.app.use("/post", post_router);
   }
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
@@ -35,7 +37,7 @@ class App {
       console.log("instanceof APIError");
       err.writeResponse(res);
     } else {
-      console.error(err)
+      console.error(err);
       res.status(500).send("Internal Server Error");
     }
   };
