@@ -29,6 +29,11 @@ router.post("/login", async (req, res) => {
     }
 });
 
+router.get("/email/:email", async (req, res) => {
+    const emailUser = req.params.email;
+    res.send(await user_peri_controller.getByEmail(emailUser));
+});
+
 router.post("/", async (req, res) => {
     const userPeri = req.body;
     res.send(await user_peri_controller.create(userPeri));

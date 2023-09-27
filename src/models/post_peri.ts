@@ -13,6 +13,7 @@ export interface periPostTable {
   created_at: ColumnType<string | undefined, never>;
   active: ColumnType<boolean>;
   id_peri_user: ColumnType<number>;
+  like: ColumnType<Number>
 }
 
 export type periPost = Selectable<periPostTable>;

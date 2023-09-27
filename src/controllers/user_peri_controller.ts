@@ -12,6 +12,14 @@ export async function getById(id: number) {
     .executeTakeFirst()
 }
 
+//get by email
+export async function getByEmail(email: string) {
+  return await db.selectFrom('peri_user')
+    .where('email', '=', email)
+    .selectAll()
+    .executeTakeFirst();
+}
+
 // return all users
 export async function getAll() {
   return await db.selectFrom('peri_user')
@@ -27,7 +35,10 @@ export async function login(email: string, password: string): Promise<boolean> {
     .executeTakeFirst()
 
   if (!check) return false;
-  else return true;
+  else {
+
+    return true;
+  };
 }
 
 export async function create(user: newPeriUser) {
